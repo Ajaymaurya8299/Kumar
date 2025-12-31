@@ -30,10 +30,7 @@ h2{
   margin-bottom:6px;
 }
 
-/* upload screen */
-#uploadScreen{text-align:center}
-
-/* main large buttons */
+/* main big button */
 .big-btn{
   background:linear-gradient(135deg,#ff512f,#dd2476);
   color:white;
@@ -47,9 +44,12 @@ h2{
   margin-top:10px;
 }
 
-/* special ad button */
-.vip-ad-btn{
-  background:linear-gradient(135deg,#ffee00,#ff9f00);
+/* hidden class */
+.hidden{display:none}
+
+/* skip button */
+.skip-btn{
+  background:linear-gradient(135deg,#00e676,#1de9b6);
   color:#000;
   font-weight:900;
 }
@@ -103,9 +103,9 @@ canvas{
 
   <h2>🎉 VIP New Year Wishes Maker 🎉</h2>
 
-  <!-- 🔥 सिर्फ क्लिक पर ad -->
-  <button class="big-btn vip-ad-btn" onclick="showAd()">
-    🤑 Special Surprise – Tap here 🤑
+  <!-- ⭐ Skip Ad (पहले hidden) -->
+  <button id="skipBtn" class="big-btn skip-btn hidden" onclick="skipAd()">
+    ⏭ Skip Ad
   </button>
 
   <!-- upload screen -->
@@ -114,7 +114,7 @@ canvas{
     <input type="file" id="imgInput" accept="image/*" hidden>
 
     <button class="big-btn"
-            onclick="showAd(); document.getElementById('imgInput').click()">
+            onclick="openAd(); document.getElementById('imgInput').click()">
       📤 अपनी फोटो अपलोड करें
     </button>
   </div>
@@ -126,10 +126,10 @@ canvas{
       <canvas id="c"></canvas>
     </div>
 
-    <button class="btn prev" onclick="showAd(); prevShayari()">⬅ पिछली शायरी</button>
-    <button class="btn next" onclick="showAd(); nextShayari()">✨ अगली शायरी</button>
-    <button class="btn share" onclick="showAd(); shareImage()">🚀 शेयर करें</button>
-    <button class="btn back" onclick="showAd(); goBack()">⬅ वापस जाएँ</button>
+    <button class="btn prev" onclick="openAd(); prevShayari()">⬅ पिछली शायरी</button>
+    <button class="btn next" onclick="openAd(); nextShayari()">✨ अगली शायरी</button>
+    <button class="btn share" onclick="openAd(); shareImage()">🚀 शेयर करें</button>
+    <button class="btn back" onclick="openAd(); goBack()">⬅ वापस जाएँ</button>
 
   </div>
 
@@ -137,25 +137,39 @@ canvas{
 
 <script>
 
-/* ✅ आपकी वेबसाइट लिंक (share में जाएगी) */
+/* 🔗 आपकी साइट लिंक (Share के साथ जाएगी) */
 const SITE_LINK="https://ajaymaurya8299.github.io/Kumar/";
 
-/* 🟡 AdsTerra – सिर्फ क्लिक पर चलेगा */
-function showAd(){
-  // क्लिक के समय ही स्क्रिप्ट inject होगी
-  var s=document.createElement("script");
-  s.src="https://pl28366677.effectivegatecpm.com/45/ea/0e/45ea0e065a95590327d0330a43bb5824.js";
-  s.async=true;
-  document.body.appendChild(s);
+/* ⭐ SMARTLINK – नई tab + 5 सेकंड बाद Skip दिखेगा */
+function openAd(){
+
+  const adUrl="https://www.effectivegatecpm.com/bn12v8x3hx?key=fd0a9f972b9219bd4ab142f2e4011868";
+
+  // ad नई tab में खुलेगा
+  window.open(adUrl,"_blank");
+
+  // Skip छुपाओ
+  const skip=document.getElementById("skipBtn");
+  skip.classList.add("hidden");
+
+  // 5 सेकंड बाद दिखाओ
+  setTimeout(()=>{
+    skip.classList.remove("hidden");
+  },5000);
 }
 
-/* CANVAS सेटअप */
+/* ⏭ Skip */
+function skipAd(){
+  alert("Ad skipped 🙂 जारी रखें");
+}
+
+/* CANVAS */
 const canvas=document.getElementById("c");
 const ctx=canvas.getContext("2d");
 const img=new Image();
 let index=0;
 
-/* ⭐ VIP shayari list */
+/* ⭐ Shayari List */
 const shayariList=[
 "✨ नए साल की नई बहार,\nखुशियों की हो फुहार ✨",
 "💖 मुस्कान रहे हमेशा साथ,\nनया साल दे खुशियों की सौगात 💖",
@@ -164,7 +178,7 @@ const shayariList=[
 "🔥 दिल में हो खुशियों का उजाला,\nनया साल लगे सबसे निराला 🔥"
 ];
 
-/* फोटो upload */
+/* Upload */
 document.getElementById("imgInput").addEventListener("change",e=>{
   img.src=URL.createObjectURL(e.target.files[0]);
 
@@ -180,7 +194,7 @@ document.getElementById("imgInput").addEventListener("change",e=>{
   }
 });
 
-/* कार्ड बनाना */
+/* Draw card */
 function drawCard(){
 
   ctx.fillStyle="#000";
@@ -188,7 +202,6 @@ function drawCard(){
 
   ctx.drawImage(img,0,70,900,820);
 
-  // रंगीन बॉक्स
   let g=ctx.createLinearGradient(0,720,900,1100);
   g.addColorStop(0,"rgba(255,0,150,.95)");
   g.addColorStop(0.5,"rgba(0,255,200,.95)");
@@ -199,7 +212,6 @@ function drawCard(){
   ctx.roundRect(28,720,844,350,35);
   ctx.fill();
 
-  // शायरी
   let text=shayariList[index];
 
   ctx.font="bold 60px sans-serif";
@@ -215,7 +227,6 @@ function drawCard(){
     y+=86;
   });
 
-  // new year text
   ctx.font="bold 66px sans-serif";
   ctx.fillStyle="#ffeb3b";
   ctx.strokeStyle="#000";
@@ -223,7 +234,6 @@ function drawCard(){
   ctx.fillText("🎉 Happy New Year 2026 🎉",450,1075);
 }
 
-/* controls */
 function nextShayari(){ index=(index+1)%shayariList.length; drawCard(); }
 function prevShayari(){ index=(index-1+shayariList.length)%shayariList.length; drawCard(); }
 
@@ -232,7 +242,6 @@ function goBack(){
   document.getElementById("editScreen").style.display="none";
 }
 
-/* share image + link */
 async function shareImage(){
 
   let blob=await new Promise(res=>canvas.toBlob(res,"image/png"));
