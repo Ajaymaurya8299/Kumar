@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VIP New Year Shayari Maker</title>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>VIP New Year Wishes Maker</title>
 
 <style>
 
 body{
   margin:0;
   font-family:Poppins,Arial;
-  background:radial-gradient(circle at top,#1a2a6c,#1a1a2e,#000);
+  background:radial-gradient(circle at top,#111,#000);
   min-height:100vh;
   display:flex;
   justify-content:center;
@@ -17,40 +20,51 @@ body{
   color:white;
 }
 
-/* Upload Screen */
-#uploadScreen{
-  text-align:center;
+.container{
   width:92%;
   max-width:480px;
 }
 
+h2{
+  text-align:center;
+  margin-bottom:6px;
+}
+
+/* upload screen */
+#uploadScreen{text-align:center}
+
+/* main large buttons */
 .big-btn{
   background:linear-gradient(135deg,#ff512f,#dd2476);
   color:white;
-  padding:20px;
-  font-size:22px;
+  padding:18px;
+  font-size:20px;
   border:none;
-  border-radius:45px;
+  border-radius:40px;
   width:100%;
   font-weight:bold;
-  box-shadow:0 15px 40px rgba(0,0,0,.6);
+  box-shadow:0 14px 35px rgba(0,0,0,.6);
+  margin-top:10px;
 }
 
-/* Edit Screen */
-#editScreen{
-  display:none;
-  width:95%;
-  max-width:480px;
+/* special ad button */
+.vip-ad-btn{
+  background:linear-gradient(135deg,#ffee00,#ff9f00);
+  color:#000;
+  font-weight:900;
 }
 
-/* Outer VIP card */
+#editScreen{display:none}
+
+/* glowing card */
 .card{
-  border-radius:28px;
-  padding:10px;
-  background:linear-gradient(145deg,#ffd700,#ff7eb3,#a18cd1,#6dd5fa);
+  margin-top:10px;
+  border-radius:26px;
+  padding:8px;
+  background:linear-gradient(145deg,#ff9a9e,#fad0c4,#a18cd1,#6dd5fa);
   background-size:400% 400%;
-  animation:vip 6s ease infinite;
-  box-shadow:0 25px 60px rgba(0,0,0,.6);
+  animation:vip 7s ease infinite;
+  box-shadow:0 20px 55px rgba(0,0,0,.7);
 }
 
 @keyframes vip{
@@ -61,23 +75,23 @@ body{
 
 canvas{
   width:100%;
-  border-radius:24px;
+  border-radius:22px;
 }
 
-/* Buttons */
+/* small buttons */
 .btn{
   width:100%;
-  padding:14px;
+  padding:12px;
   border:none;
   border-radius:30px;
-  margin-top:10px;
-  font-size:17px;
+  margin-top:8px;
+  font-size:16px;
   font-weight:bold;
 }
 
 .prev{background:#00c6ff;color:white}
 .next{background:#2ecc71;color:white}
-.share{background:black;color:white}
+.share{background:#ffffff;color:#000}
 .back{background:#ff1744;color:white}
 
 </style>
@@ -85,53 +99,72 @@ canvas{
 
 <body>
 
-<!-- Upload Screen -->
-<div id="uploadScreen">
+<div class="container">
+
   <h2>🎉 VIP New Year Wishes Maker 🎉</h2>
 
-  <input type="file" id="imgInput" accept="image/*" hidden>
-
-  <button class="big-btn" onclick="document.getElementById('imgInput').click()">
-    📤 अपनी फोटो अपलोड करें
+  <!-- 🔥 सिर्फ क्लिक पर ad -->
+  <button class="big-btn vip-ad-btn" onclick="showAd()">
+    🤑 Special Surprise – Tap here 🤑
   </button>
-</div>
 
-<!-- Edit Screen -->
-<div id="editScreen">
+  <!-- upload screen -->
+  <div id="uploadScreen">
 
-  <div class="card">
-    <canvas id="c"></canvas>
+    <input type="file" id="imgInput" accept="image/*" hidden>
+
+    <button class="big-btn"
+            onclick="showAd(); document.getElementById('imgInput').click()">
+      📤 अपनी फोटो अपलोड करें
+    </button>
   </div>
 
-  <button class="btn prev" onclick="prevShayari()">⬅ पिछली शायरी</button>
-  <button class="btn next" onclick="nextShayari()">✨ अगली शायरी</button>
-  <button class="btn share" onclick="shareImage()">📤 शेयर करें</button>
-  <button class="btn back" onclick="goBack()">⬅ वापस जाएँ</button>
+  <!-- edit screen -->
+  <div id="editScreen">
+
+    <div class="card">
+      <canvas id="c"></canvas>
+    </div>
+
+    <button class="btn prev" onclick="showAd(); prevShayari()">⬅ पिछली शायरी</button>
+    <button class="btn next" onclick="showAd(); nextShayari()">✨ अगली शायरी</button>
+    <button class="btn share" onclick="showAd(); shareImage()">🚀 शेयर करें</button>
+    <button class="btn back" onclick="showAd(); goBack()">⬅ वापस जाएँ</button>
+
+  </div>
 
 </div>
 
 <script>
 
-let canvas=document.getElementById("c");
-let ctx=canvas.getContext("2d");
-let img=new Image();
+/* ✅ आपकी वेबसाइट लिंक (share में जाएगी) */
+const SITE_LINK="https://ajaymaurya8299.github.io/Kumar/";
+
+/* 🟡 AdsTerra – सिर्फ क्लिक पर चलेगा */
+function showAd(){
+  // क्लिक के समय ही स्क्रिप्ट inject होगी
+  var s=document.createElement("script");
+  s.src="https://pl28366677.effectivegatecpm.com/45/ea/0e/45ea0e065a95590327d0330a43bb5824.js";
+  s.async=true;
+  document.body.appendChild(s);
+}
+
+/* CANVAS सेटअप */
+const canvas=document.getElementById("c");
+const ctx=canvas.getContext("2d");
+const img=new Image();
 let index=0;
 
-/* 50+ mix shayari list (VIP Selected) */
+/* ⭐ VIP shayari list */
 const shayariList=[
-"🌟 नए साल की नई बहार,\nखुशियों की हो फुहार 🌟",
-"💖 तेरी मुस्कान मेरी पहचान,\nनया साल बस रहे तेरा नाम 💖",
-"✨ हर ख्वाहिश हो पूरी,\nनया साल लाए खुशियों की दूरी ✨",
-"🎉 हंसी आपका साथ न छोड़े,\nनया साल हर ग़म तोड़े 🎉",
-"💫 नए साल में मिले ऐसी उड़ान,\nऊपर ही ऊपर हो आपकी पहचान 💫",
-"🌸 रिश्ते रहें अपने प्यारे,\nनया साल खुशियाँ दे ढेर सारे 🌸",
-"🔥 जिंदगी में आए नया उजाला,\nसाल नया लगे सबसे निराला 🔥",
-"😊 मुस्कान हो होठों पर सदा,\nनया साल दे खुशियों की दवा 😊",
-"🌺 दुआ है मेरी रब से,\nहर पल आपका हंसी भरा हो 🌺",
-"🎆 नया साल दे नई रोशनी,\nखिले हर दिन आपकी जिंदगी 🎆"
+"✨ नए साल की नई बहार,\nखुशियों की हो फुहार ✨",
+"💖 मुस्कान रहे हमेशा साथ,\nनया साल दे खुशियों की सौगात 💖",
+"🎉 हर दिन आपका खास बने,\nनया साल सुपरस्टार बने 🎉",
+"🌟 दुआ है रब से यही,\nपूरा हो हर सपना तुम्हारा 🌟",
+"🔥 दिल में हो खुशियों का उजाला,\nनया साल लगे सबसे निराला 🔥"
 ];
 
-/* Upload Image */
+/* फोटो upload */
 document.getElementById("imgInput").addEventListener("change",e=>{
   img.src=URL.createObjectURL(e.target.files[0]);
 
@@ -147,28 +180,26 @@ document.getElementById("imgInput").addEventListener("change",e=>{
   }
 });
 
-/* Main draw function */
+/* कार्ड बनाना */
 function drawCard(){
 
-  // background
   ctx.fillStyle="#000";
   ctx.fillRect(0,0,900,1100);
 
-  // user image full brightness
-  ctx.drawImage(img,0,80,900,800);
+  ctx.drawImage(img,0,70,900,820);
 
-  // VIP glow colorful panel
+  // रंगीन बॉक्स
   let g=ctx.createLinearGradient(0,720,900,1100);
-  g.addColorStop(0,"rgba(255,0,150,0.95)");
-  g.addColorStop(0.5,"rgba(0,255,180,0.95)");
-  g.addColorStop(1,"rgba(255,200,0,0.95)");
+  g.addColorStop(0,"rgba(255,0,150,.95)");
+  g.addColorStop(0.5,"rgba(0,255,200,.95)");
+  g.addColorStop(1,"rgba(255,220,0,.95)");
   ctx.fillStyle=g;
 
   ctx.beginPath();
   ctx.roundRect(28,720,844,350,35);
   ctx.fill();
 
-  // shayari text
+  // शायरी
   let text=shayariList[index];
 
   ctx.font="bold 60px sans-serif";
@@ -177,54 +208,46 @@ function drawCard(){
   ctx.strokeStyle="black";
   ctx.lineWidth=8;
 
-  let y=860;
+  let y=855;
   text.split("\n").forEach(line=>{
     ctx.strokeText(line,450,y);
     ctx.fillText(line,450,y);
-    y+=85;
+    y+=86;
   });
 
-  // VIP 2026 heading
-  ctx.font="bold 64px sans-serif";
+  // new year text
+  ctx.font="bold 66px sans-serif";
   ctx.fillStyle="#ffeb3b";
   ctx.strokeStyle="#000";
   ctx.strokeText("🎉 Happy New Year 2026 🎉",450,1075);
   ctx.fillText("🎉 Happy New Year 2026 🎉",450,1075);
 }
 
-/* Next / Previous */
-function nextShayari(){
-  index=(index+1)%shayariList.length;
-  drawCard();
-}
+/* controls */
+function nextShayari(){ index=(index+1)%shayariList.length; drawCard(); }
+function prevShayari(){ index=(index-1+shayariList.length)%shayariList.length; drawCard(); }
 
-function prevShayari(){
-  index=(index-1+shayariList.length)%shayariList.length;
-  drawCard();
-}
-
-/* Back to upload screen */
 function goBack(){
   document.getElementById("uploadScreen").style.display="block";
   document.getElementById("editScreen").style.display="none";
 }
 
-/* Native Share */
+/* share image + link */
 async function shareImage(){
 
   let blob=await new Promise(res=>canvas.toBlob(res,"image/png"));
-  let file=new File([blob],"vip_newyear.png",{type:"image/png"});
+  let file=new File([blob],"newyear_card.png",{type:"image/png"});
 
   if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
     await navigator.share({
       title:"VIP New Year Wish",
-      text:"🎉 Happy New Year 2026 🎉",
+      text:`🎉 Happy New Year 2026 🎉\n👉 यहाँ बनाओ अपना कार्ड:\n${SITE_LINK}`,
       files:[file]
     });
     return;
   }
 
-  alert("आपके ब्राउज़र में शेयर पैनल सपोर्ट नहीं है (HTTPS पर चलाएँ)");
+  alert("आपके ब्राउज़र में direct share support नहीं है।");
 }
 
 </script>
