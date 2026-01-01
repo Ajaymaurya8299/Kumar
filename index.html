@@ -1,241 +1,305 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>VIP New Year Card Maker 2026</title>
+<title>VIP New Year App 2026</title>
 
 <style>
 
+*{box-sizing:border-box}
+
 body{
   margin:0;
-  font-family:Poppins,Arial;
-  background:#020617;
+  font-family:'Poppins',Arial;
+  background:linear-gradient(145deg,#020617,#0f172a,#020617);
   color:white;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
 }
 
-.app{
-  max-width:480px;
-  margin:auto;
-  padding:16px;
-}
-
-.btn{
-  width:100%;
-  padding:15px;
-  border-radius:14px;
-  border:none;
-  margin-top:8px;
-  font-size:16px;
-  font-weight:700;
+/* HEADER */
+.header{
+  height:58px;
   background:linear-gradient(135deg,#ff512f,#dd2476);
-  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-size:19px;
+  letter-spacing:.5px;
+  box-shadow:0 8px 30px rgba(0,0,0,.5);
 }
 
-#adOverlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.92);
-  display:none;
-  z-index:9999;
-  text-align:center;
-  padding-top:120px;
+/* MAIN AREA */
+.main{
+  flex:1;
+  padding:14px;
+  max-width:500px;
+  margin:auto;
+  width:100%;
 }
 
-#skipBtn{
-  margin-top:12px;
-  padding:8px 14px;
-  border:none;
-  border-radius:10px;
-  font-weight:900;
-  background:#00ff9c;
-  color:black;
-  display:none;
+/* APP CARD */
+.card{
+  background:rgba(255,255,255,.06);
+  border-radius:22px;
+  padding:16px;
+  box-shadow:0 25px 60px rgba(0,0,0,.6);
+  backdrop-filter:blur(7px);
 }
 
+/* CANVAS */
 canvas{
   width:100%;
-  margin-top:10px;
-  border-radius:16px;
+  border-radius:20px;
+  margin-top:12px;
+  box-shadow:0 10px 35px rgba(0,0,0,.6);
 }
 
+/* BUTTONS */
+button{
+  width:100%;
+  padding:14px;
+  border-radius:16px;
+  border:none;
+  font-size:16px;
+  font-weight:700;
+  margin-top:8px;
+}
+
+.primary{
+  background:linear-gradient(135deg,#22c55e,#4ade80);
+  color:black;
+}
+
+.secondary{
+  background:linear-gradient(135deg,#38bdf8,#6366f1);
+  color:white;
+}
+
+/* BOTTOM NAV */
+.nav{
+  height:62px;
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(8px);
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  box-shadow:0 -10px 30px rgba(0,0,0,.6);
+}
+.nav div{font-size:13px;opacity:.85}
+
+/* FULLSCREEN AD */
+#adOverlay{
+  position:fixed; inset:0;
+  background:#000000f0;
+  display:none;
+  z-index:9999;
+}
+#adFrame{width:100%;height:100%;border:none;}
+#skipBtn{
+  position:absolute;right:12px;top:12px;
+  padding:8px 14px;border-radius:12px;border:none;
+  font-weight:900;background:#00ff9c;display:none;
+}
 </style>
 </head>
 
 <body>
 
+<div class="header">🎉 VIP NEW YEAR – 2026</div>
+
+<!-- FULLSCREEN AD -->
 <div id="adOverlay">
-  <h2>⚡ Sponsored Ad</h2>
-
-  <p id="skipInfo">⏳ 5 सेकंड प्रतीक्षा करें…</p>
-
-  <!-- SAME PAGE INTERSTITIAL SLOT -->
-  <div id="interstitialBox"></div>
-
-  <button id="skipBtn" onclick="closeAd()">⏭ Skip Ad</button>
+  <button id="skipBtn" onclick="closeAd()">Skip Ad</button>
+  <iframe id="adFrame"></iframe>
 </div>
 
-<div class="app">
+<div class="main">
+<div class="card">
 
-<h2>🎉 VIP New Year Card Maker 2026</h2>
+  <h3>📸 अपनी फोटो अपलोड करें</h3>
+  <input type="file" id="imgInput" accept="image/*" onchange="loadImg()">
 
-<input type="file" id="imgInput" accept="image/*" onchange="loadImg()">
+  <canvas id="c" style="display:none"></canvas>
 
-<div id="cardArea" style="display:none">
+  <div id="actions" style="display:none">
 
-<canvas id="c"></canvas>
+    <!-- next/prev -->
+    <button class="secondary" onclick="prevShayari()">⬅ पिछली शायरी</button>
+    <button class="secondary" onclick="nextShayari()">➡ अगली शायरी</button>
 
-<button class="btn" onclick="withAd(prevShayari)">⬅ पिछली शायरी</button>
-<button class="btn" onclick="withAd(nextShayari)">➡ अगली शायरी</button>
-<button class="btn" onclick="withAd(downloadImg)">📥 डाउनलोड करें</button>
-<button class="btn" onclick="withAd(shareImg)">📤 शेयर करें</button>
+    <!-- ✅ ONLY SHARE BUTTON (Download removed) -->
+    <button class="primary" onclick="adThen(shareImg)">📤 Share</button>
 
+  </div>
+</div>
 </div>
 
+<div class="nav">
+  <div>🏠 Home</div>
+  <div>🖼 Create</div>
+  <div>👤 Profile</div>
 </div>
 
 <script>
 
-/* --------------------------------------------------
-   ⭐ OPTION–A (RECOMMENDED)
-   👉 यहाँ अपना असली INTERSTITIAL CODE डालें
---------------------------------------------------*/
+/* 🔗 आपका Smartlink */
+const SMARTLINK="https://www.effectivegatecpm.com/bn12v8x3hx?key=fd0a9f972b9219bd4ab142f2e4011868";
 
-// उदाहरण:
-/*
-function loadInterstitial(){
- atOptions={
-  'key':'YOUR_KEY',
-  'format':'interstitial',
- };
- var s=document.createElement("script");
- s.src="//YOURNETWORK/invoke.js";
- document.getElementById("interstitialBox").appendChild(s);
-}
-*/
+/* ⭐ AD SYSTEM */
+function showAd(){
+  adFrame.src=SMARTLINK;
+  adOverlay.style.display="block";
+  skipBtn.style.display="none";
 
-/* --------------------------------------------------
-   ⭐ OPTION–B (आपका दिया हुआ pop/redirect code)
-   👉 जब तक interstitial न मिले, यह चलेगा
---------------------------------------------------*/
-
-function loadInterstitial(){
-   // ⚠️ यह redirect खोलेगा — same-page ad नहीं
-   window.open("https://pl28366677.effectivegatecpm.com/45/ea/0e/45ea0e065a95590327d0330a43bb5824.js","_blank");
+  setTimeout(()=>skipBtn.style.display="block",5000);
 }
 
-/* -------------------------------------------------- */
+let afterAd=null;
 
-let lastAd=0;
-let afterAdAction=null;
-
-function withAd(action){
-
-  afterAdAction=action;
-
-  const now=Date.now();
-
-  // 5 सेकंड के अंदर बार-बार ad नहीं
-  if(now-lastAd<5000){
-    action();
-    return;
-  }
-
-  lastAd=now;
-
-  document.getElementById("adOverlay").style.display="block";
-  document.getElementById("skipBtn").style.display="none";
-  document.getElementById("skipInfo").innerText="⏳ 5 सेकंड प्रतीक्षा करें…";
-
-  loadInterstitial();
-
-  setTimeout(()=>{
-    document.getElementById("skipBtn").style.display="inline-block";
-    document.getElementById("skipInfo").innerText="➡ अब Skip कर सकते हैं";
-  },5000);
+function adThen(fn){
+  afterAd=fn;
+  showAd();
 }
 
 function closeAd(){
-  document.getElementById("adOverlay").style.display="none";
-  if(typeof afterAdAction==="function") afterAdAction();
+  adOverlay.style.display="none";
+  adFrame.src="";
+  if(afterAd){afterAd();afterAd=null;}
 }
 
-/* ---------------- CARD MAKER ---------------- */
-
-const canvas=document.getElementById("c");
+/* ⭐ CANVAS */
+const canvas=c;
 const ctx=canvas.getContext("2d");
 const img=new Image();
 let i=0;
 
+/* IMAGE AUTO COVER FIT */
+function drawCover(img,x,y,w,h){
+  const r=Math.max(w/img.width,h/img.height);
+  const nh=img.height*r, nw=img.width*r;
+  ctx.drawImage(img,x-(nw-w)/2,y-(nh-h)/2,nw,nh);
+}
+
+/* ⭐ SHAYARI LIST */
 const list=[
-"✨ नए साल की नई बहार,\nखुशियों की हो फुहार ✨",
-"💖 मुस्कान रहे हमेशा साथ,\nनया साल दे खुशियों की सौगात 💖",
-"🎉 हर दिन आपका खास बने,\nनया साल सुपरस्टार बने 🎉",
-"🌟 दुआ है रब से यही,\nपूरा हो हर सपना तुम्हारा 🌟"
+"नए साल में मेरे अपने सब खुश रहें, स्वस्थ रहें, सम्मान के साथ मुस्कुराते रहें 🙏🎉",
+"2026 में किस्मत नहीं — हमारा हौसला काम करेगा 💥🎉",
+"नया साल है… कहानी अपनी लिखनी है ✨📖",
+"2025 ने गिराया सही — 2026 उड़ने का साल है 🚀🔥",
+"इस नए साल एक ही वादा — खुद को कभी छोटा नहीं समझेंगे 💪🎇",
+"नया साल मांगने का नहीं — बनाने का होता है ⚡🎉",
+"Happy New Year नहीं — Happy New Life 🎉✨"
 ];
 
+/* LOAD IMAGE */
 function loadImg(){
-  const f=document.getElementById("imgInput").files[0];
+  const f=imgInput.files[0];
   if(!f)return;
+
   img.src=URL.createObjectURL(f);
-  img.onload=function(){
-    document.getElementById("cardArea").style.display="block";
-    canvas.width=900;canvas.height=1100;
+
+  img.onload=()=>{
+    c.style.display="block";
+    actions.style.display="block";
+    canvas.width=900; canvas.height=1100;
     draw();
   }
 }
 
+/* ⭐ MAIN DRAW FUNCTION */
 function draw(){
-  ctx.fillStyle="#000";ctx.fillRect(0,0,900,1100);
-  ctx.drawImage(img,0,40,900,760);
 
-  let g=ctx.createLinearGradient(0,760,900,1100);
-  g.addColorStop(0,"#ff0077cc");
-  g.addColorStop(1,"#33ffcc");
-  ctx.fillStyle=g;
-  ctx.roundRect(30,760,840,320,30);
+  /* background */
+  let bg=ctx.createLinearGradient(0,0,900,1100);
+  bg.addColorStop(0,"#020617");
+  bg.addColorStop(1,"#0f172a");
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,900,1100);
+
+  /* image auto crop */
+  drawCover(img,0,80,900,680);
+
+  /* SHAYARI BOX */
+  const boxX=40, boxY=800, boxW=820, boxH=240;
+
+  ctx.fillStyle="rgba(0,0,0,0.55)";
+  ctx.roundRect(boxX,boxY,boxW,boxH,26);
   ctx.fill();
 
+  /* AUTO FIT SHAYARI */
+  let text=list[i];
+  let fontSize=44, lines=[], textHeight;
+
+  do{
+    ctx.font="700 "+fontSize+"px Poppins";
+    let words=text.split(" ");
+    let line="";
+    lines=[];
+    for(let w of words){
+      let test=line+w+" ";
+      if(ctx.measureText(test).width>boxW-70){
+        lines.push(line);
+        line=w+" ";
+      }else line=test;
+    }
+    lines.push(line);
+    textHeight=lines.length*(fontSize+6);
+    if(textHeight<boxH-30)break;
+    fontSize-=2;
+  }while(fontSize>20);
+
   ctx.textAlign="center";
-  ctx.fillStyle="#fff";
-  ctx.strokeStyle="#000";
-  ctx.lineWidth=6;
-  ctx.font="bold 54px sans-serif";
-  let y=880;
+  ctx.fillStyle="white";
+  ctx.strokeStyle="black";
+  ctx.lineWidth=5;
 
-  list[i].split("\n").forEach(line=>{
-    ctx.strokeText(line,450,y);
-    ctx.fillText(line,450,y);
-    y+=80;
-  });
+  let startY=boxY+55;
+  for(let l of lines){
+    ctx.strokeText(l,450,startY);
+    ctx.fillText(l,450,startY);
+    startY+=fontSize+6;
+  }
 
-  ctx.font="bold 64px sans-serif";
-  ctx.fillStyle="yellow";
-  ctx.strokeText("🎉 Happy New Year 2026 🎉",450,1080);
-  ctx.fillText("🎉 Happy New Year 2026 🎉",450,1080);
+  /* GOLD HAPPY NEW YEAR 2026 */
+  const g=ctx.createLinearGradient(0,1020,900,1100);
+  g.addColorStop(0,"#ffd700");
+  g.addColorStop(1,"#ff9f00");
+
+  ctx.font="900 64px Poppins";
+  ctx.fillStyle=g;
+  ctx.strokeStyle="black";
+  ctx.lineWidth=7;
+
+  ctx.strokeText("✨ HAPPY NEW YEAR 2026 ✨",450,1070);
+  ctx.fillText("✨ HAPPY NEW YEAR 2026 ✨",450,1070);
 }
 
+/* NEXT / PREV */
 function nextShayari(){i=(i+1)%list.length;draw();}
 function prevShayari(){i=(i-1+list.length)%list.length;draw();}
 
-function downloadImg(){
-  const a=document.createElement("a");
-  a.href=canvas.toDataURL();
-  a.download="newyear2026.png";
-  a.click();
-}
-
+/* ⭐ SHARE WITH SITE LINK */
 async function shareImg(){
   canvas.toBlob(async(b)=>{
-    const f=new File([b],"card.png",{type:"image/png"});
+    const f=new File([b],"newyear.png",{type:"image/png"});
+
     try{
-      await navigator.share({files:[f],title:"New Year 2026"});
-    }catch(e){alert("Share सपोर्ट नहीं करता");}
+      await navigator.share({
+        files:[f],
+        text:"🎉 Happy New Year 2026 🎉 अपना कार्ड यहाँ बनाइए 👇",
+        url:"https://ajaymaurya8299.github.io/Kumar/"
+      });
+    }catch(e){
+      alert("आपका ब्राउज़र share सपोर्ट नहीं करता");
+    }
   });
 }
 
 </script>
-
 </body>
 </html>
