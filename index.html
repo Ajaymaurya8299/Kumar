@@ -11,67 +11,118 @@
 body{
 margin:0;
 font-family:'Poppins',Arial;
+background:linear-gradient(135deg,#ffdde1,#ee9ca7,#a1c4fd,#c2ffd8);
 min-height:100vh;
-
-/* ⭐ सुंदर background IMAGE */
-background:url("https://images.unsplash.com/photo-1513151233558-d860c5398176?w=1200") center/cover no-repeat fixed;
+padding:12px;
 }
 
 /* MAIN CARD */
 .wrapper{
 max-width:480px;
-margin:12px auto;
-background:rgba(255,255,255,.92);
+margin:auto;
+background:white;
 border-radius:22px;
 padding:16px;
-box-shadow:0 25px 60px rgba(0,0,0,.35);
+box-shadow:0 25px 60px rgba(0,0,0,.18);
 }
 
+/* USER IMAGE ROUND */
 #dp{
-width:180px;height:180px;border-radius:50%;
-border:6px solid white;object-fit:cover;
-display:block;margin:12px auto;
-box-shadow:0 0 28px rgba(255,0,100,.55);
+width:170px;
+height:170px;
+border-radius:50%;
+border:6px solid white;
+object-fit:cover;
+display:block;
+margin:8px auto;
+box-shadow:0 0 28px rgba(255,0,140,.6);
 }
 
+/* SHAYARI CARD */
 .shayariBox{
-background:white;
-padding:18px;
+background:#ffffff;
 border-radius:22px;
-box-shadow:0 20px 40px rgba(0,0,0,.18);
+padding:18px;
+box-shadow:0 18px 45px rgba(0,0,0,.13);
+margin-top:10px;
 }
 
+/* SHAYARI TEXT */
 #shayari{
 font-size:22px;
 font-weight:800;
 text-align:center;
 color:#0f172a;
+line-height:30px;
 }
 
+/* NEW YEAR GOLD TEXT */
 .gold{
-text-align:center;
-font-size:26px;
+font-size:28px;
 font-weight:900;
+text-align:center;
 background:linear-gradient(120deg,#ff512f,#ffb000);
 color:transparent;
 -webkit-background-clip:text;
 }
 
+/* BUTTONS */
 .btn{
-width:100%;padding:14px;
-border-radius:14px;border:none;
-font-size:16px;font-weight:800;margin-top:8px;
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+font-size:16px;
+font-weight:800;
+margin-top:8px;
 color:white;
 }
+
 .blue{background:linear-gradient(135deg,#3b82f6,#6366f1);}
 .green{background:linear-gradient(135deg,#22c55e,#4ade80);}
 
+/* CANVAS HIDE */
 canvas{display:none}
+
+/* FULL SCREEN AD */
+#adOverlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.92);
+display:none;
+z-index:9999;
+}
+
+#adFrame{
+width:100%;
+height:100%;
+border:none;
+}
+
+#skipBtn{
+position:absolute;
+top:12px;
+right:12px;
+background:#00ff9c;
+color:#000;
+padding:8px 14px;
+border:none;
+border-radius:10px;
+font-weight:900;
+display:none;
+}
 
 </style>
 </head>
 
 <body>
+
+<!-- FULL SCREEN AD -->
+<div id="adOverlay">
+<button id="skipBtn" onclick="closeAd()">⏭ Skip Ad</button>
+<iframe id="adFrame"></iframe>
+</div>
+
 
 <div class="wrapper">
 
@@ -91,104 +142,171 @@ canvas{display:none}
 <button class="btn blue" onclick="prev()">⬅ पिछली शायरी</button>
 <button class="btn blue" onclick="next()">➡ अगली शायरी</button>
 
-<button class="btn green" onclick="shareImg()">📤 Share</button>
+<button class="btn green" onclick="adThenShare()">📤 Share</button>
 
 <canvas id="canvas"></canvas>
 
 </div>
 
+
 <script>
 
-/* 🔗 आपका असली साइट लिंक */
-const siteLink = "https://ajaymaurya8299.github.io/Kumar";
+const SITE_LINK = "https://ajaymaurya8299.github.io/Kumar";
+const AD_URL   = "YOUR_AD_LINK_HERE";
 
-/* SHAYARI LIST */
+/* ----------------- AD SYSTEM ------------------ */
+
+let afterAdAction=null;
+
+function adThenShare(){
+ afterAdAction=shareImageFinal;
+ showAd();
+}
+
+function showAd(){
+ adOverlay.style.display="block";
+ adFrame.src=AD_URL;
+ skipBtn.style.display="none";
+ setTimeout(()=>skipBtn.style.display="block",4000);
+}
+
+function closeAd(){
+ adOverlay.style.display="none";
+ adFrame.src="";
+ if(afterAdAction){afterAdAction();afterAdAction=null;}
+}
+
+/* ---------------- SHAYARI LIST 50+ ---------------- */
+
 const list=[
-"नए साल में मेरे अपने सब खुश रहें 🎉🙏",
-"2026 आपके सपनों का साल बने 🚀",
-"नया साल नई उम्मीदें लाए ✨",
-"आपकी मुस्कान ऐसे ही बनी रहे 😊",
-"हर दिन खुशियों से भरा रहे 🎊",
-"भगवान आपको सफलता दे 🙏",
-"Happy New Year 2026 🎉"
+"नया साल आपके लिए खुशियों की बारिश लाए 🎉",
+"हर ख्वाब हो पूरा आपका ✨",
+"2026 आपकी लाइफ बदल दे 💥",
+"नई सुबह नई रोशनी 🌅",
+"आपकी हर दुआ कबूल हो 🙏",
+"चेहरे पर मुस्कान बनी रहे 😊",
+"नया साल – नई शुरुआत 🔥",
+"आप जहाँ रहें खुश रहें 💖",
+"भगवान आपकी रक्षा करें 🙏",
+"खुशियों का सागर मिले 🌊",
+"सफलता के नए दरवाज़े खुलें 🚪",
+"हर सपना साकार हो ✨",
+"दिल से शुभकामनाएँ 🎉",
+"ग़म दूर हों – सुख पास हों 💗",
+"आपकी किस्मत चमके 💎",
+"New Year – New Energy ⚡",
+"आपकी लाइफ रॉयल बने 👑",
+"हर दिन खूबसूरत हो 🌸",
+"Stay Blessed Always 🙏",
+"Happy New Year Dear 💝",
+"जो चाहो वो मिले 🎯",
+"आपकी मुस्कान यूँ ही रहे 😊",
+"ईश्वर का आशीर्वाद बना रहे 🙏",
+"नई उड़ान भरो 🕊️",
+"नया साल Success वाला हो 🚀",
+"दुआ है खुश रहो तुम 💖",
+"नए सपने नए इरादे 💫",
+"हर सुबह उम्मीद भरी हो 🌄",
+"नया साल मुबारक हो 🎉",
+"दिल से निकली शुभकामनाएँ 💐",
+"नया अध्याय शुरू करो 📖",
+"आपकी Family खुश रहे 👨‍👩‍👦‍👦",
+"2026 Golden Year हो ✨",
+"भगवान भला करें 🙏",
+"Khush Raho Bas ❤️",
+"Attitude भी high रखो 😎",
+"Motivation कभी कम न हो 💪",
+"Believe in Yourself 🌟",
+"Dream Big • Work Hard 🚀",
+"Love, Peace & Happiness 💝",
+"Emotional दिल की दुआ 💞",
+"Sad पल भी गुजर जाते हैं 💧",
+"Your Time is Coming ⏳",
+"Be Positive Always 🌈",
+"Shine Bright Like Gold ✨",
+"Royal Look – Royal Life 👑",
+"Best Wishes For You 🌟",
+"Happy New Year 2026 🎆",
+"Love you Friends ❤️"
 ];
 
 let i=0;
 function next(){i=(i+1)%list.length;shayari.innerText=list[i];}
 function prev(){i=(i-1+list.length)%list.length;shayari.innerText=list[i];}
 
-file.onchange=e=> dp.src=URL.createObjectURL(e.target.files[0]);
+/* PHOTO LOAD */
+file.onchange=e=>{
+ dp.src=URL.createObjectURL(e.target.files[0]);
+};
 
-/* ⭐ SHARE IMAGE + TEXT + LINK + QR ⭐ */
-async function shareImg(){
+/* --------------- SHARE IMAGE --------------- */
+
+async function shareImageFinal(){
 
 const c=document.getElementById("canvas");
 const ctx=c.getContext("2d");
 
 c.width=1080;
-c.height=1080;
+c.height=1200;
 
-/* gradient bg */
-let g=ctx.createLinearGradient(0,0,1080,1080);
-g.addColorStop(0,"#ff9a9e");
-g.addColorStop(1,"#8fd3f4");
-ctx.fillStyle=g;
-ctx.fillRect(0,0,1080,1080);
+/* colorful background */
+let bg=new Image();
+bg.src="https://i.ibb.co/3c1cN7m/bg-newyear.jpg";  /* कोई भी bg url रख सकते हो */
+await bg.decode();
+ctx.drawImage(bg,0,0,1080,1200);
 
-/* round user photo */
+/* round photo */
 if(dp.src){
- let img=new Image();
- img.src=dp.src;
+ let img=new Image();img.src=dp.src;
  await img.decode();
 
  ctx.save();
  ctx.beginPath();
- ctx.arc(540,240,180,0,Math.PI*2);
+ ctx.arc(540,230,170,0,Math.PI*2);
  ctx.clip();
- ctx.drawImage(img,340,40,400,400);
+ ctx.drawImage(img,340,60,400,400);
  ctx.restore();
 }
 
 /* shayari text */
 ctx.fillStyle="#000";
-ctx.font="bold 40px Poppins";
+ctx.font="bold 42px Poppins";
 ctx.textAlign="center";
-wrapText(ctx,list[i],540,560,800,50);
+wrapText(ctx,list[i],540,560,820,50);
 
-/* new year title */
+/* Happy new year text */
 ctx.font="bold 60px Poppins";
-ctx.fillStyle="#d97706";
-ctx.fillText("✨ HAPPY NEW YEAR 2026 ✨",540,980);
+ctx.fillStyle="#ff7b00";
+ctx.fillText("✨ HAPPY NEW YEAR 2026 ✨",540,1080);
 
-/* ⭐ SMALL QR IN BOTTOM RIGHT ⭐ */
+/* small QR bottom right */
 let qr=new Image();
-qr.src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data="+encodeURIComponent(siteLink);
+qr.src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data="+encodeURIComponent(SITE_LINK);
 await qr.decode();
-ctx.drawImage(qr,1080-110-10,1080-110-10,110,110);
+ctx.drawImage(qr,880,980,150,150);
 
-/* SHARE PANEL OPEN */
 c.toBlob(async(b)=>{
- let f=new File([b],"newyear2026.png",{type:"image/png"});
+ let f=new File([b],"newyear.png",{type:"image/png"});
 
  await navigator.share({
   files:[f],
-  title:"Happy New Year 2026",
-  text:"🎉 ऐसा ही कार्ड बनाओ यहाँ:\n" + siteLink
+  text:"🎉 अपना New Year Photo Frame बनाओ यहाँ:\n"+SITE_LINK
  });
 
 });
 
 }
 
-/* text wrap */
+/* wrap text */
 function wrapText(ctx,text,x,y,maxWidth,lineHeight){
-let words=text.split(" ");let line="";
+let words=text.split(" ");
+let line="";
 for(let n=0;n<words.length;n++){
 let test=line+words[n]+" ";
 if(ctx.measureText(test).width>maxWidth){
- ctx.fillText(line,x,y);
- line=words[n]+" ";
- y+=lineHeight;
+ctx.fillText(line,x,y);
+line=words[n]+" ";
+y+=lineHeight;
 }else line=test;
 }
 ctx.fillText(line,x,y);
