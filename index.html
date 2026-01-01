@@ -11,45 +11,43 @@
 body{
 margin:0;
 font-family:'Poppins',Arial;
-background:#000;
 min-height:100vh;
-padding:12px;
+
+/* ⭐ सुंदर background IMAGE */
+background:url("https://images.unsplash.com/photo-1513151233558-d860c5398176?w=1200") center/cover no-repeat fixed;
 }
 
 /* MAIN CARD */
 .wrapper{
 max-width:480px;
-margin:auto;
-background:white;
+margin:12px auto;
+background:rgba(255,255,255,.92);
 border-radius:22px;
 padding:16px;
-box-shadow:0 25px 60px rgba(0,0,0,.18);
+box-shadow:0 25px 60px rgba(0,0,0,.35);
 }
 
-/* USER PHOTO */
 #dp{
 width:180px;height:180px;border-radius:50%;
 border:6px solid white;object-fit:cover;
-display:block;margin:10px auto;
-box-shadow:0 0 30px rgba(255,0,100,.5);
+display:block;margin:12px auto;
+box-shadow:0 0 28px rgba(255,0,100,.55);
 }
 
-/* SHAYARI CARD */
 .shayariBox{
-background:rgba(255,255,255,0.85);
-padding:16px;
+background:white;
+padding:18px;
 border-radius:22px;
-box-shadow:0 20px 50px rgba(0,0,0,.15);
+box-shadow:0 20px 40px rgba(0,0,0,.18);
 }
 
 #shayari{
 font-size:22px;
 font-weight:800;
 text-align:center;
-color:#000;
+color:#0f172a;
 }
 
-/* NEW YEAR TEXT */
 .gold{
 text-align:center;
 font-size:26px;
@@ -59,7 +57,6 @@ color:transparent;
 -webkit-background-clip:text;
 }
 
-/* BUTTON */
 .btn{
 width:100%;padding:14px;
 border-radius:14px;border:none;
@@ -71,31 +68,10 @@ color:white;
 
 canvas{display:none}
 
-/* FULL SCREEN AD */
-#adOverlay{
-position:fixed;inset:0;
-background:rgba(0,0,0,.92);
-display:none;z-index:9999;
-}
-#adFrame{width:100%;height:100%;border:none;}
-
-#skipBtn{
-position:absolute;top:12px;right:12px;
-background:#00ff9c;color:#000;
-padding:8px 14px;border:none;border-radius:10px;
-font-weight:900;display:none;
-}
-
 </style>
 </head>
 
 <body>
-
-<!-- AD OVERLAY -->
-<div id="adOverlay">
-  <button id="skipBtn" onclick="closeAd()">⏭ Skip Ad</button>
-  <iframe id="adFrame"></iframe>
-</div>
 
 <div class="wrapper">
 
@@ -115,7 +91,7 @@ font-weight:900;display:none;
 <button class="btn blue" onclick="prev()">⬅ पिछली शायरी</button>
 <button class="btn blue" onclick="next()">➡ अगली शायरी</button>
 
-<button class="btn green" onclick="adThenShare()">📤 Share</button>
+<button class="btn green" onclick="shareImg()">📤 Share</button>
 
 <canvas id="canvas"></canvas>
 
@@ -123,73 +99,43 @@ font-weight:900;display:none;
 
 <script>
 
-/* BACKGROUND IMAGE */
-const BG_IMAGE_URL =
-"https://images.unsplash.com/photo-1519677100203-a0e668c92439";
+/* 🔗 आपका असली साइट लिंक */
+const siteLink = "https://ajaymaurya8299.github.io/Kumar";
 
-/* YOUR SITE LINK */
-const SITE_LINK = "https://your-site-link";
-
-/* YOUR SMARTLINK */
-const SMARTLINK =
-"https://www.effectivegatecpm.com/bn12v8x3hx?key=fd0a9f972b9219bd4ab142f2e4011868";
-
-/* -------- AD SYSTEM -------- */
-let afterAdAction=null;
-
-function adThenShare(){afterAdAction=shareImg;showAd();}
-
-function showAd(){
- adOverlay.style.display="block";
- adFrame.src=SMARTLINK;
- skipBtn.style.display="none";
- setTimeout(()=>skipBtn.style.display="block",5000);
-}
-
-function closeAd(){
- adOverlay.style.display="none";
- adFrame.src="";
- if(afterAdAction){afterAdAction();afterAdAction=null;}
-}
-
-/* -------- SHAYARI LIST -------- */
+/* SHAYARI LIST */
 const list=[
-"नए साल में मेरे अपने सब खुश रहें, स्वस्थ रहें और मुस्कुराते रहें 🎉🙏",
-"नया साल आपकी जिंदगी में खुशियों की बरसात लाए ✨💖",
-"नई सुबह नई किरण के साथ नया साल मुबारक 🌅🎉",
-"हर ख्वाब पूरा हो इसी दुआ के साथ नया साल मुबारक ✨🙏",
-"2026 आपके लिए सफलता का साल हो 🚀🔥",
-"चेहरे पर मुस्कान रहे – दिल में प्यार रहे 💖😊",
-"नया साल – नई शुरुआत – नया सफर शुभ हो 🎉✨"
+"नए साल में मेरे अपने सब खुश रहें 🎉🙏",
+"2026 आपके सपनों का साल बने 🚀",
+"नया साल नई उम्मीदें लाए ✨",
+"आपकी मुस्कान ऐसे ही बनी रहे 😊",
+"हर दिन खुशियों से भरा रहे 🎊",
+"भगवान आपको सफलता दे 🙏",
+"Happy New Year 2026 🎉"
 ];
 
 let i=0;
 function next(){i=(i+1)%list.length;shayari.innerText=list[i];}
 function prev(){i=(i-1+list.length)%list.length;shayari.innerText=list[i];}
 
-/* IMAGE PREVIEW */
-file.onchange=e=>{dp.src=URL.createObjectURL(e.target.files[0]);};
+file.onchange=e=> dp.src=URL.createObjectURL(e.target.files[0]);
 
-/* -------- SHARE IMAGE -------- */
+/* ⭐ SHARE IMAGE + TEXT + LINK + QR ⭐ */
 async function shareImg(){
 
-const c=canvas;
+const c=document.getElementById("canvas");
 const ctx=c.getContext("2d");
 
 c.width=1080;
 c.height=1080;
 
-/* BACKGROUND IMAGE */
-let bg=new Image();
-bg.src=BG_IMAGE_URL;
-await bg.decode();
-ctx.drawImage(bg,0,0,1080,1080);
-
-/* dark overlay for premium look */
-ctx.fillStyle="rgba(0,0,0,0.35)";
+/* gradient bg */
+let g=ctx.createLinearGradient(0,0,1080,1080);
+g.addColorStop(0,"#ff9a9e");
+g.addColorStop(1,"#8fd3f4");
+ctx.fillStyle=g;
 ctx.fillRect(0,0,1080,1080);
 
-/* user round photo */
+/* round user photo */
 if(dp.src){
  let img=new Image();
  img.src=dp.src;
@@ -197,46 +143,46 @@ if(dp.src){
 
  ctx.save();
  ctx.beginPath();
- ctx.arc(540,230,170,0,Math.PI*2);
+ ctx.arc(540,240,180,0,Math.PI*2);
  ctx.clip();
- ctx.drawImage(img,340,60,400,340);
+ ctx.drawImage(img,340,40,400,400);
  ctx.restore();
 }
 
-/* SHAYARI TEXT */
-ctx.fillStyle="#fff";
+/* shayari text */
+ctx.fillStyle="#000";
 ctx.font="bold 40px Poppins";
 ctx.textAlign="center";
-wrapText(ctx,list[i],540,560,760,50);
+wrapText(ctx,list[i],540,560,800,50);
 
-/* HAPPY NEW YEAR */
+/* new year title */
 ctx.font="bold 60px Poppins";
-ctx.fillStyle="#ffd54f";
-ctx.fillText("✨ HAPPY NEW YEAR 2026 ✨",540,950);
+ctx.fillStyle="#d97706";
+ctx.fillText("✨ HAPPY NEW YEAR 2026 ✨",540,980);
 
-/* QR bottom-right small */
+/* ⭐ SMALL QR IN BOTTOM RIGHT ⭐ */
 let qr=new Image();
-qr.src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data="
-+encodeURIComponent(SITE_LINK);
+qr.src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data="+encodeURIComponent(siteLink);
 await qr.decode();
-ctx.drawImage(qr,1080-120,1080-120,110,110);
+ctx.drawImage(qr,1080-110-10,1080-110-10,110,110);
 
-/* SHARE */
-c.toBlob(async b=>{
- const f=new File([b],"newyear2026.png",{type:"image/png"});
+/* SHARE PANEL OPEN */
+c.toBlob(async(b)=>{
+ let f=new File([b],"newyear2026.png",{type:"image/png"});
+
  await navigator.share({
   files:[f],
   title:"Happy New Year 2026",
-  text:"🎉 ऐसा ही VIP कार्ड बनाओ यहाँ ➜ "+SITE_LINK
+  text:"🎉 ऐसा ही कार्ड बनाओ यहाँ:\n" + siteLink
  });
+
 });
 
 }
 
-/* WRAP TEXT */
+/* text wrap */
 function wrapText(ctx,text,x,y,maxWidth,lineHeight){
-let words=text.split(" ");
-let line="";
+let words=text.split(" ");let line="";
 for(let n=0;n<words.length;n++){
 let test=line+words[n]+" ";
 if(ctx.measureText(test).width>maxWidth){
