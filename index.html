@@ -1,225 +1,253 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>VIP New Year Card</title>
-
+<title>Maths Olympiad Test</title>
 <style>
-body{
-margin:0;
-font-family:'Poppins',Arial;
-background:#ffe7ff;
-padding:12px;
-}
-
-.box{
-max-width:480px;
-margin:auto;
-background:white;
-padding:16px;
-border-radius:18px;
-box-shadow:0 20px 60px rgba(0,0,0,.2);
-}
-
-/*** BACKGROUND CARD IMAGE ***/
-#bg{
-width:100%;
-border-radius:16px;
-}
-
-/*** DP ***/
-#dp{
-width:170px;
-height:170px;
-border-radius:50%;
-border:6px solid white;
-object-fit:cover;
-display:block;
-margin:-95px auto 5px;
-box-shadow:0 0 25px rgba(0,0,0,.4);
-}
-
-.shayari{
-font-size:22px;
-font-weight:800;
-text-align:center;
-}
-
-button{
-width:100%;
-padding:14px;
-border-radius:12px;
-border:none;
-background:#008cff;
-font-size:16px;
-font-weight:bold;
-color:white;
-}
-
-/*** FULLSCREEN AD OVERLAY ***/
-#ad{
-position:fixed;
-inset:0;
-background:#000;
-display:none;
-z-index:9999;
-}
-
-#ad iframe{
-width:100%;
-height:100%;
-border:0;
-}
-
-#skip{
-position:absolute;
-top:12px;
-right:12px;
-background:#00ff9d;
-padding:8px 16px;
-border-radius:10px;
-border:none;
-font-weight:bold;
-display:none;
-}
+body{font-family:Arial,sans-serif;background:#eef2ff;margin:0;padding:15px;color:#172554}
+.app{max-width:650px;margin:auto}
+header{background:#4338ca;color:white;padding:22px;border-radius:18px;text-align:center}
+.card{background:white;padding:18px;border-radius:15px;margin-top:15px}
+input,select{width:100%;padding:13px;margin:8px 0;border:1px solid #bbb;border-radius:9px;font-size:16px;box-sizing:border-box}
+button{padding:13px 18px;border:0;border-radius:10px;background:#4338ca;color:white;font-size:16px;cursor:pointer;margin:5px}
+button:disabled{opacity:.5}
+.option{display:block;width:100%;text-align:left;background:#f1f5f9;color:#172554;border:1px solid #ddd}
+.option.selected{background:#dbeafe;border:2px solid #4338ca}
+.hide{display:none}
+.timer{font-size:25px;color:#dc2626;font-weight:bold}
 </style>
 </head>
-
 <body>
+<div class="app">
 
-<!-- AD SCREEN -->
-<div id="ad">
-<button id="skip" onclick="closeAd()">⏭ Skip Ad</button>
-<iframe id="adframe"></iframe>
+<header>
+<h1>🏆 Maths Olympiad</h1>
+<p>Classes 1, 2 and 3</p>
+<p>50 Questions | 100 Marks | 20 Minutes</p>
+</header>
+
+<div id="intro" class="card">
+<h2>Student Details</h2>
+<label>बच्चे का नाम</label>
+<input id="student" placeholder="नाम लिखें">
+
+<label>कक्षा</label>
+<select id="grade">
+<option value="">कक्षा चुनें</option>
+<option value="1">Class 1</option>
+<option value="2">Class 2</option>
+<option value="3">Class 3</option>
+</select>
+
+<button id="startBtn" type="button">START TEST 🚀</button>
 </div>
 
-<div class="box">
+<div id="test" class="hide">
+<div class="card">
+<div id="counter">Question 1 / 50</div>
+<div class="timer" id="timer">20:00</div>
+<div id="progress">0 answered</div>
+</div>
 
-<img id="bg" src="https://i.ibb.co/3fcqZVh/bg.jpg">
+<div class="card">
+<h3 id="section"></h3>
+<h2 id="question"></h2>
+<div id="options"></div>
+<button id="prevBtn">Previous</button>
+<button id="nextBtn">Next</button>
+</div>
 
-<input type="file" id="file" accept="image/*">
-<img id="dp">
+<div class="card">
+<button id="submitBtn">SUBMIT TEST</button>
+</div>
+</div>
 
-<p class="shayari" id="shayari">
-नए साल में मेरे अपने सब खुश रहें, स्वस्थ रहें और मुस्कुराते रहें 🎉🙏
-</p>
-
-<h2 style="text-align:center;">✨ HAPPY NEW YEAR 2026 ✨</h2>
-
-<button onclick="showAdThenShare()">📤 Share</button>
-
-<canvas id="c" style="display:none"></canvas>
-
+<div id="result" class="card hide">
+<h2>🎉 आपका परिणाम</h2>
+<h1 id="score"></h1>
+<div id="summary"></div>
+<button id="emailBtn">ईमेल से रिजल्ट भेजें</button>
+<div id="review"></div>
+<button onclick="location.reload()">New Test</button>
+</div>
 </div>
 
 <script>
+const questions = [
+["Number System","सबसे बड़ी संख्या कौन-सी है?",["89","98","79","88"],1],
+["Number System","45 के बाद कौन-सी संख्या आती है?",["44","46","47","50"],1],
+["Number System","5 दहाई और 3 इकाई से संख्या?",["35","53","503","58"],1],
+["Number System","सबसे छोटी दो अंकों की संख्या?",["1","9","10","11"],2],
+["Number System","70 में कितनी दहाइयाँ हैं?",["7","70","10","17"],0],
+["Number System","सम संख्या कौन-सी है?",["13","25","38","41"],2],
+["Number System","विषम संख्या कौन-सी है?",["20","32","46","51"],3],
+["Number System","100 से एक कम?",["90","99","101","98"],1],
+["Number System","26 और 29 के बीच की संख्या?",["24","25","27","30"],2],
+["Number System","6 दहाई और 4 इकाई?",["46","64","604","60"],1],
+["Number System","12 + 15 = ?",["26","27","28","29"],1],
+["Number System","50 - 18 = ?",["32","31","33","38"],0],
+["Number System","सबसे छोटी संख्या?",["56","65","46","64"],2],
+["Number System","एक दर्जन में कितनी वस्तुएँ?",["10","11","12","13"],2],
+["Number System","5,10,15,20 अगली संख्या?",["21","24","25","30"],2],
+["Number System","तीन अंकों की सबसे छोटी संख्या?",["10","99","100","101"],2],
+["Number System","80 से बड़ी और 90 से छोटी?",["79","90","85","95"],2],
 
-/*** YOUR AD NETWORK SMARTLINK ***/
-const AD_LINK = "https://www.effectivegatecpm.com/bn12v8x3hx?key=fd0a9f972b9219bd4ab142f2e4011868";
+["Missing Number","2,4,6,8,__ ",["9","10","11","12"],1],
+["Missing Number","5,10,15,__ ,25",["18","19","20","22"],2],
+["Missing Number","1,3,5,7,__ ",["8","9","10","11"],1],
+["Missing Number","10,20,30,__ ",["35","40","45","50"],1],
+["Missing Number","20,18,16,__ ",["15","14","13","12"],1],
+["Missing Number","3,6,9,12,__ ",["14","15","16","18"],1],
+["Missing Number","1,2,4,8,__ ",["10","12","14","16"],3],
+["Missing Number","50,45,40,__ ",["38","35","30","25"],1],
+["Missing Number","7,14,21,__ ",["25","27","28","29"],2],
+["Missing Number","2,5,8,11,__ ",["12","13","14","15"],2],
+["Missing Number","100,90,80,__ ",["75","70","60","85"],1],
+["Missing Number","4,8,12,__ ,20",["14","15","16","18"],2],
+["Missing Number","1,4,7,10,__ ",["11","12","13","14"],2],
+["Missing Number","30,25,20,__ ",["18","17","15","10"],2],
+["Missing Number","11,22,33,__ ",["40","42","44","45"],1],
+["Missing Number","9,18,27,__ ",["32","35","36","37"],2],
+["Missing Number","2,4,8,16,__ ",["20","24","30","32"],3],
 
-/*** SHOW AD THEN SHARE ***/
-function showAdThenShare(){
- document.getElementById("ad").style.display="block";
- document.getElementById("adframe").src = AD_LINK;
-
- setTimeout(()=>document.getElementById("skip").style.display="block",5000);
-}
-
-/*** CLOSE AD AND SHARE IMAGE ***/
-function closeAd(){
- document.getElementById("ad").style.display="none";
- document.getElementById("adframe").src="";
- generate();
-}
-
-/*** SHAYARI LIST ***/
-const s=[
-"नए साल में मेरे अपने सब खुश रहें, स्वस्थ रहें और मुस्कुराते रहें 🎉🙏",
-"नया साल खुशियों की बरसात लाए ✨",
-"भगवान हर मनोकामना पूरी करे 🙏",
-"आपका हर दिन शानदार हो 🎉",
-"चेहरे पर मुस्कान बनी रहे 😊",
-"नया साल मुबारक हो 2026 ✨"
+["Tricky Puzzle","दो हाथों में कितनी उँगलियाँ?",["5","8","10","12"],2],
+["Tricky Puzzle","2 बिल्लियाँ 2 चूहे 2 मिनट में पकड़ती हैं। 1 बिल्ली 1 चूहा कितने मिनट में?",["1","2","4","8"],1],
+["Tricky Puzzle","5 बच्चों को आम दिए, फिर भी टोकरी में एक आम रहा। कैसे?",["सड़ा आम","आखिरी बच्चे को टोकरी सहित आम दिया","एक बच्चा नहीं आया","दो आम दिए"],1],
+["Tricky Puzzle","एक सप्ताह में कितने दिन?",["5","6","7","8"],2],
+["Tricky Puzzle","3 पेंसिल थीं, 2 और मिलीं। कुल?",["4","5","6","7"],1],
+["Tricky Puzzle","12 केले में से 4 खा लिए। बचे?",["6","7","8","9"],2],
+["Tricky Puzzle","1 किलो रूई या 1 किलो लोहा कौन भारी?",["रूई","लोहा","बराबर","पता नहीं"],2],
+["Tricky Puzzle","घड़ी में 3 बजे हैं। घंटे की सुई?",["12","3","6","9"],1],
+["Tricky Puzzle","चार कोनों में एक-एक बिल्ली। कुल?",["2","3","4","8"],2],
+["Tricky Puzzle","10 रुपये में से 4 खर्च। बचे?",["4","5","6","7"],2],
+["Tricky Puzzle","पेड़ पर 6 चिड़ियाँ थीं, 1 उड़ गई। बचीं?",["5","6","7","4"],0],
+["Tricky Puzzle","किस महीने में 28 दिन होते हैं?",["केवल फरवरी","सभी महीने","जनवरी","अप्रैल"],1],
+["Tricky Puzzle","3 बच्चे 3 आम 3 मिनट में खाते हैं। 1 बच्चा 1 आम कितने मिनट में?",["1","2","3","9"],2],
+["Tricky Puzzle","वर्ग की कितनी भुजाएँ?",["3","4","5","6"],1],
+["Tricky Puzzle","सोमवार के 2 दिन बाद कौन-सा दिन?",["मंगलवार","बुधवार","गुरुवार","शुक्रवार"],1],
+["Tricky Puzzle","किस संख्या में 5 जोड़ने पर 12 मिलेगा?",["5","6","7","8"],2]
 ];
 
-let i=0;
+let current=0;
+let answers=Array(50).fill(null);
+let seconds=1200;
+let timer=null;
+let finished=false;
+let studentName="";
+let studentClass="";
 
-file.onchange=e=>{
- dp.src = URL.createObjectURL(e.target.files[0]);
-};
+const $=id=>document.getElementById(id);
 
-/*** CREATE IMAGE AND SHARE ***/
-async function generate(){
-
-const c=document.getElementById("c");
-const ctx=c.getContext("2d");
-
-c.width=1080;
-c.height=1080;
-
-/*** BACKGROUND IMAGE ***/
-let bg=new Image();
-bg.src=document.getElementById("bg").src;
-await bg.decode();
-ctx.drawImage(bg,0,0,1080,1080);
-
-/*** ROUND DP ***/
-if(dp.src){
- let img=new Image();
- img.src=dp.src;
- await img.decode();
-
- ctx.save();
- ctx.beginPath();
- ctx.arc(540,260,180,0,Math.PI*2);
- ctx.clip();
- ctx.drawImage(img,340,60,400,400);
- ctx.restore();
+function startTest(){
+ if(studentName.trim()==="" || studentClass===""){
+  alert("कृपया बच्चे का नाम और कक्षा भरें।");
+  return;
+ }
+ $("intro").classList.add("hide");
+ $("test").classList.remove("hide");
+ showQuestion();
+ timer=setInterval(()=>{
+  seconds--;
+  $("timer").textContent=
+   String(Math.floor(seconds/60)).padStart(2,"0")+":"+
+   String(seconds%60).padStart(2,"0");
+  if(seconds<=0) finishTest();
+ },1000);
 }
 
-/*** SHAYARI TEXT ***/
-ctx.fillStyle="#000";
-ctx.font="bold 42px Poppins";
-ctx.textAlign="center";
-wrapText(ctx,s[i],540,560,800,54);
+function showQuestion(){
+ let q=questions[current];
+ $("counter").textContent="Question "+(current+1)+" / 50";
+ $("section").textContent=q[0];
+ $("question").textContent=q[1];
+ $("progress").textContent=answers.filter(x=>x!==null).length+" answered";
+ $("options").innerHTML="";
+ q[2].forEach((option,i)=>{
+  let b=document.createElement("button");
+  b.className="option"+(answers[current]===i?" selected":"");
+  b.textContent=["A","B","C","D"][i]+". "+option;
+  b.disabled=answers[current]!==null;
+  b.onclick=()=>{
+   if(answers[current]===null){
+    answers[current]=i;
+    showQuestion();
+   }
+  };
+  $("options").appendChild(b);
+ });
+ $("prevBtn").disabled=current===0;
+ $("nextBtn").disabled=current===49;
+}
 
-/*** BOTTOM LINE ***/
-ctx.font="bold 60px Poppins";
-ctx.fillStyle="#d97706";
-ctx.fillText("✨ HAPPY NEW YEAR 2026 ✨",540,980);
+function previousQuestion(){
+ if(current>0){current--;showQuestion();}
+}
+function nextQuestion(){
+ if(current<49){current++;showQuestion();}
+}
 
-/*** FINAL SHARE ***/
-c.toBlob(async(b)=>{
+function finishTest(){
+ if(finished)return;
+ finished=true;
+ clearInterval(timer);
+ $("test").classList.add("hide");
+ $("result").classList.remove("hide");
 
-let f=new File([b],"wish.png",{type:"image/png"});
+ let correct=0,wrong=0,blank=0;
+ questions.forEach((q,i)=>{
+  if(answers[i]===null)blank++;
+  else if(answers[i]===q[3])correct++;
+  else wrong++;
+ });
+ $("score").textContent=(correct*2)+" / 100";
+ $("summary").innerHTML=
+  "<p>नाम: "+escapeText(studentName)+"</p>"+
+  "<p>कक्षा: "+studentClass+"</p>"+
+  "<p>सही: "+correct+" | गलत: "+wrong+" | खाली: "+blank+"</p>";
 
-await navigator.share({
-title:"Happy New Year 2026",
-text:"अपनी फोटो से ऐसा कार्ड बनाने के लिए यहाँ जाएँ 👇\nhttps://ajaymaurya8299.github.io/Kumar",
-files:[f]
+ $("review").innerHTML=questions.map((q,i)=>
+  "<p>Q"+(i+1)+": "+escapeText(q[1])+
+  "<br>आपका उत्तर: "+(answers[i]===null?"नहीं दिया":escapeText(q[2][answers[i]]))+
+  "<br>सही उत्तर: "+escapeText(q[2][q[3]])+"</p>"
+ ).join("");
+}
+
+function escapeText(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+function sendEmail(){
+ let correct=questions.filter((q,i)=>answers[i]===q[3]).length;
+ let wrong=answers.filter((a,i)=>a!==null&&a!==questions[i][3]).length;
+ let blank=50-answers.filter(a=>a!==null).length;
+ let report="Student: "+studentName+
+ "\nClass: "+studentClass+
+ "\nScore: "+(correct*2)+"/100"+
+ "\nCorrect: "+correct+"\nWrong: "+wrong+"\nUnanswered: "+blank+"\n\n";
+ report+=questions.map((q,i)=>
+ "Q"+(i+1)+": "+q[1]+
+ "\nSelected: "+(answers[i]===null?"Not answered":q[2][answers[i]])+
+ "\nCorrect: "+q[2][q[3]]
+ ).join("\n\n");
+ location.href="mailto:mauryaajay49391@gmail.com?subject="+
+ encodeURIComponent("Maths Olympiad Result - "+studentName)+
+ "&body="+encodeURIComponent(report);
+}
+
+$("startBtn").addEventListener("click",()=>{
+ studentName=$("student").value;
+ studentClass=$("grade").value;
+ startTest();
 });
-
+$("prevBtn").addEventListener("click",previousQuestion);
+$("nextBtn").addEventListener("click",nextQuestion);
+$("submitBtn").addEventListener("click",()=>{
+ if(confirm("क्या आप टेस्ट जमा करना चाहते हैं?"))finishTest();
 });
-
-}
-
-/*** TEXT WRAP FUNCTION ***/
-function wrapText(ctx,text,x,y,w,l){
-let words=text.split(" ");
-let line="";
-for(let n=0;n<words.length;n++){
-let test=line+words[n]+" ";
-if(ctx.measureText(test).width>w){
-ctx.fillText(line,x,y);
-line=words[n]+" ";
-y+=l;
-}else line=test;
-}
-ctx.fillText(line,x,y);
-}
+$("emailBtn").addEventListener("click",sendEmail);
 </script>
-
 </body>
 </html>
